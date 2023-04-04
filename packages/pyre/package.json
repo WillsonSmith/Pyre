@@ -7,6 +7,10 @@
   "bin": {
     "pyre": "./dist/bin/pyre.js"
   },
+  "files": [
+    "dist",
+    "htmlTemplates"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wireit",
@@ -25,6 +29,8 @@
   "dependencies": {
     "@lit-labs/ssr": "^3.1.1",
     "commander": "^10.0.0",
+    "esbuild": "^0.17.15",
+    "glob": "^9.3.4",
     "lit": "^2.7.1"
   },
   "devDependencies": {

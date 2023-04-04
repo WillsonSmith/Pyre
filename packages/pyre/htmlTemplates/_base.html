@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- PYRE:META -->
+    <!-- PYRE:LINKS -->
+    <!-- PYRE:STYLES -->
+    <title><!-- PYRE:TITLE --></title>
+    <!-- PYRE:DESCRIPTION -->
+  </head>
+  <body>
+    <!-- PYRE:CONTENT -->
+    <script type="module">
+      const hydrateSupportInstalled = import('lit/experimental-hydrate-support.js');
+      const HTMLProto = HTMLTemplateElement.prototype;
+      const shadowRootSupport =
+        HTMLProto.hasOwnProperty('shadowRoot') || HTMLProto.hasOwnProperty('shadowRootMode');
+      if (!shadowRootSupport) {
+        const { hydrateShadowRoots } = await import(
+          '@webcomponents/template-shadowroot/template-shadowroot.js'
+        );
+        hydrateShadowRoots(document.body);
+      }
+
+      await hydrateSupportInstalled;
+      const { hydrate } = await import('lit/experimental-hydrate.js');
+      const { default: template, initialData, update } = await import('<!-- PYRE:MODULE -->');
+
+      const { render } = await import('lit');
+      hydrate(await template(initialData), document.body);
+      if (update) {
+        update().then(async (data) => {
+          render(await template(data), document.body);
+        });
+      }
+    </script>
+  </body>
+</html>
