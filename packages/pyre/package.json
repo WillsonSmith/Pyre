@@ -2,20 +2,29 @@
   "name": "pyre",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "type": "module",
+  "bin": {
+    "pyre": "./dist/bin/pyre.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "wireit"
+    "build": "wireit",
+    "dev": "wireit"
   },
   "wireit": {
     "build": {
       "command": "tsc"
+    },
+    "dev": {
+      "command": "tsc -w"
     }
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@lit-labs/ssr": "^3.1.1",
+    "commander": "^10.0.0",
     "lit": "^2.7.1"
   },
   "devDependencies": {
