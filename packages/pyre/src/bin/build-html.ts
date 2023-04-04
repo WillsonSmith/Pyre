@@ -12,12 +12,10 @@ import { writeFile } from 'node:fs/promises';
 export const build = async (devDir: string) => {
   const files = await glob(`${devDir}/**/*.pyre.js`);
   for (const file of files) {
-    const { html, title, styles, links } = await renderLit(file);
+    const { html, ...rest } = await renderLit(file);
     if (!html) throw new Error(`No HTML returned from ${file}`);
     const assembledPage = await assemblePage(html, file.replace(devDir, ''), {
-      title,
-      styles,
-      links,
+      ...rest,
     });
     const destFile = file.replace('.pyre.js', '.html');
     await writeFile(destFile, assembledPage);
@@ -27,6 +25,7 @@ export const build = async (devDir: string) => {
 import { readFile } from 'node:fs/promises';
 
 interface PageDetails {
+  lang?: string;
   title?: string;
   description?: string;
   styles?: string;
@@ -49,8 +48,9 @@ function replaceTemplateInserts(
   markup: string,
   data: PageDetails & { fileSourceDir: string },
 ) {
-  const { title, description, styles, links, fileSourceDir } = data;
+  const { lang = 'en', title, description, styles, links, fileSourceDir } = data;
   let template = templateHTML;
+  template = insertLanguage(template, lang);
   template = insertTitle(template, title);
   template = insertDescription(template, description);
   template = insertMetaTags(template, []);
@@ -86,6 +86,13 @@ interface Link {
 interface MetaTag {
   name: string;
   content: string;
+}
+
+function insertLanguage(template: string, language?: string) {
+  if (language) {
+    return template.replace('<!-- PYRE:LANG -->', language);
+  }
+  return template.replace('<!-- PYRE:LANG -->', 'en');
 }
 
 function insertMetaTags(template: string, metaTags: MetaTag[] = []) {

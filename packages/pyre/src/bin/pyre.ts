@@ -20,6 +20,7 @@ program
   .option('-i, --input <input>', 'Input directory')
   .option('-o, --output <output>', 'Output directory')
   .option('-t, --template <template>', 'Template file')
+  .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
     const input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
     const output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');

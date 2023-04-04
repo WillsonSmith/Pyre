@@ -6,16 +6,14 @@ import { collectResult } from '@lit-labs/ssr/lib/render-result.js';
 try {
   const { file, frontmatter = {} } = workerData;
   const module = await import(file);
-  const { default: renderPage, styles, links, title, description, initialData = {} } = module;
+  const { default: renderPage, initialData = {}, styles, ...rest } = module;
   const renderedTemplate = render(await renderPage({ ...initialData, ...frontmatter }));
   const html = await collectResult(renderedTemplate);
   parentPort?.postMessage({
     html,
-    title,
-    description,
     styles: styles?.cssText,
-    links,
     ...frontmatter,
+    ...rest,
   });
 } catch (error) {
   console.error(error);
