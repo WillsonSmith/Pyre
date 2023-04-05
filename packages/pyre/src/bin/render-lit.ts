@@ -11,10 +11,10 @@ type RenderedPage = {
 };
 
 import { Worker } from 'node:worker_threads';
-export async function renderLit(file: string) {
+export async function renderLit(file: string, additionalData?: Record<string, unknown>) {
   const renderedPage: RenderedPage = await new Promise((resolve, reject) => {
     const worker = new Worker(join(__dirname, '..', 'renderer', 'renderThread.js'), {
-      workerData: { file },
+      workerData: { file, additionalData },
     });
 
     worker.on('message', (message: RenderedPage) => {

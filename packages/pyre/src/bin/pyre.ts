@@ -5,6 +5,7 @@ const program = new Command();
 
 import { transpile } from './transpile.js';
 import { build as buildHtml } from './build-html.js';
+import { build as buildMd } from './build-md.js';
 
 import { join } from 'path';
 import { cwd } from 'process';
@@ -44,6 +45,7 @@ program
     });
 
     await buildHtml(output, { prebundle: options.prebundle });
+    await buildMd(input, output);
   });
 
 program.parse();
