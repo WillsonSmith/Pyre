@@ -6,11 +6,21 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "wireit"
+    "build": "wireit",
+    "dev": "wireit"
   },
   "wireit": {
     "build": {
-      "command": "pyre build"
+      "command": "pyre build",
+      "dependencies": [
+        "../pyre:build"
+      ]
+    },
+    "dev": {
+      "command": "pyre build && web-dev-server --node-resolve --root-dir pyre --watch --open",
+      "dependencies": [
+        "../pyre:build"
+      ]
     }
   },
   "author": "",
@@ -18,5 +28,8 @@
   "dependencies": {
     "lit": "^2.7.1",
     "pyre": "file:../pyre"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.1.38"
   }
 }
