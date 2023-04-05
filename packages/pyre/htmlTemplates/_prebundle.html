@@ -13,19 +13,17 @@
   <body>
     <!-- PYRE:CONTENT -->
     <script type="module">
-      const hydrateSupportInstalled = import('@lit-labs/ssr-client/lit-element-hydrate-support.js');
+      const hydrateSupportInstalled = import('/pyre-bundles/lit-hydrate-support-installed.js');
       const HTMLProto = HTMLTemplateElement.prototype;
       const shadowRootSupport =
         HTMLProto.hasOwnProperty('shadowRoot') || HTMLProto.hasOwnProperty('shadowRootMode');
       if (!shadowRootSupport) {
-        const { hydrateShadowRoots } = await import(
-          '@webcomponents/template-shadowroot/template-shadowroot.js'
-        );
+        const { hydrateShadowRoots } = await import('/pyre-bundles/template-shadowroot.js');
         hydrateShadowRoots(document.body);
       }
 
       await hydrateSupportInstalled;
-      const { hydrate } = await import('@lit-labs/ssr-client');
+      const { hydrate } = await import('/pyre-bundles/lit-hydrate.js');
       const { default: template, initialData, update } = await import('<!-- PYRE:MODULE -->');
 
       const { render } = await import('lit');
