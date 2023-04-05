@@ -15,6 +15,17 @@ program
   .version('0.0.1');
 
 program
+  .command('new <name>')
+  .description('Create a new site')
+  .argument('<name>', 'Name of the site')
+  .option('-t, --template <template>', 'Template to use')
+  .option('-d, --directory <directory>', 'Directory to create the site in')
+  .option('--no-install', 'Do not install dependencies')
+  .action((name) => {
+    console.log(`Creating a new site called ${name}`);
+  });
+
+program
   .command('build')
   .description('Build the site')
   .option('-i, --input <input>', 'Input directory')
