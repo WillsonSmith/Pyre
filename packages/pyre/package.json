@@ -18,13 +18,16 @@
   },
   "wireit": {
     "build": {
-      "command": "echo \"Building...\"",
       "dependencies": [
-        "build:ts"
+        "build:ts",
+        "build:scripts"
       ]
     },
     "build:ts": {
       "command": "tsc"
+    },
+    "build:scripts": {
+      "command": "esbuild --format=esm --outdir=scripts/ scripts/*.ts"
     },
     "dev": {
       "command": "tsc -w"
