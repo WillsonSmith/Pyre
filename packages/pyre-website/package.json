@@ -7,11 +7,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wireit",
+    "build:prebundle": "wireit",
     "dev": "wireit"
   },
   "wireit": {
     "build": {
       "command": "pyre build",
+      "dependencies": [
+        "../pyre:build"
+      ]
+    },
+    "build:prebundle": {
+      "command": "pyre build --prebundle",
       "dependencies": [
         "../pyre:build"
       ]

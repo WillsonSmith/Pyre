@@ -9,13 +9,19 @@ import { renderLit } from './render-lit.js';
 
 import { writeFile } from 'node:fs/promises';
 
-export const build = async (devDir: string) => {
+interface BuildOptions {
+  prebundle?: boolean;
+}
+
+export const build = async (devDir: string, { prebundle }: BuildOptions) => {
   const files = await glob(`${devDir}/**/*.pyre.js`);
   for (const file of files) {
     const { html, ...rest } = await renderLit(file);
     if (!html) throw new Error(`No HTML returned from ${file}`);
+
     const assembledPage = await assemblePage(html, file.replace(devDir, ''), {
-      ...rest,
+      prebundle,
+      pageDetails: { ...rest },
     });
     const destFile = file.replace('.pyre.js', '.html');
     await writeFile(destFile, assembledPage);
@@ -31,15 +37,28 @@ interface PageDetails {
   styles?: string;
   links?: { rel: string; href: string }[];
 }
-async function assemblePage(markup: string, fileSourceDir: string, pageDetails: PageDetails) {
+async function assemblePage(
+  markup: string,
+  fileSourceDir: string,
+  options: {
+    prebundle?: boolean;
+    pageDetails: PageDetails;
+  },
+) {
   const htmlTemplate = await readFile(
-    join(__dirname, '..', '..', 'htmlTemplates', '_base.html'),
+    join(
+      __dirname,
+      '..',
+      '..',
+      'htmlTemplates',
+      options.prebundle ? '_prebundle.html' : '_base.html',
+    ),
     'utf-8',
   );
 
   return replaceTemplateInserts(htmlTemplate, markup, {
     fileSourceDir,
-    ...pageDetails,
+    ...options.pageDetails,
   });
 }
 

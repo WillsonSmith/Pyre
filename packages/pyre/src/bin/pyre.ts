@@ -37,7 +37,13 @@ program
     const output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
 
     await transpile(input, output);
-    await buildHtml(output);
+
+    await new Promise((resolve) => {
+      console.log('Implement dependency copy for prebundle (see build-html.ts)');
+      resolve(true);
+    });
+
+    await buildHtml(output, { prebundle: options.prebundle });
   });
 
 program.parse();
