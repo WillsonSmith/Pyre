@@ -9,6 +9,7 @@ import { build as buildMd } from './build-md.js';
 
 import { join } from 'path';
 import { cwd } from 'process';
+import { stat } from 'fs/promises';
 
 program
   .name('pyre')
@@ -34,13 +35,26 @@ program
   .option('-t, --template <template>', 'Template file')
   .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
-    const input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
-    const output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
+    let input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
+    let output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
+
+    try {
+      const stats = await stat(join(cwd(), 'pyre.config.js'));
+      if (stats.isFile()) {
+        console.log('Using pyre.config.js');
+        const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
+
+        const config = configFn();
+        input = config.input ? join(cwd(), config.input) : input;
+        output = config?.output?.dir ? join(cwd(), config.output.dir) : output;
+      }
+    } catch (e) {
+      console.log('No pyre.config.js found');
+    }
 
     await transpile(input, output);
 
     await new Promise((resolve) => {
-      console.log('Implement dependency copy for prebundle (see build-html.ts)');
       resolve(true);
     });
 
