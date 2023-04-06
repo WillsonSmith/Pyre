@@ -4,6 +4,14 @@ export default () => {
     output: {
       dir: 'dist',
     },
-    assetStrategy: 'symlink', // symlink, copy, none
+    watch: {
+      assetStrategy: 'symlink', // symlink, copy, none
+      output: {
+        dir: 'pyre',
+      },
+    },
+    build: {
+      assetStrategy: 'copy', // symlink, copy, none
+    },
   };
 };
