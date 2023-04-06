@@ -44,6 +44,9 @@ export const build = async (srcDir: string, destDir: string) => {
       body: string;
     } = fm(fileContents);
 
+    if (!frontmatter.permalink) throw new Error(`No permalink found in ${file}`);
+    if (!frontmatter.template) throw new Error(`No template found in ${file}`);
+
     const content = marked.parse(body);
 
     const template = join(dirname(file).replace(srcDir, destDir), frontmatter.template);
