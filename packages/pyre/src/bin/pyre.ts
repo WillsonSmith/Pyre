@@ -11,6 +11,8 @@ import { join } from 'path';
 import { cwd } from 'process';
 import { stat } from 'fs/promises';
 
+import choki from 'chokidar';
+
 program
   .name('pyre')
   .description('Pyre is a static site generator for the modern web.')
@@ -25,6 +27,40 @@ program
   .option('--no-install', 'Do not install dependencies')
   .action((name) => {
     console.log(`Creating a new site called ${name}`);
+  });
+
+program
+  .command('watch')
+  .description('Watch the site for changes')
+  .option('-i, --input <input>', 'Input directory')
+  .option('-o, --output <output>', 'Output directory')
+  .option('-t, --template <template>', 'Template file')
+  .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
+  .action(async (options) => {
+    let input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
+    let output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
+
+    try {
+      const stats = await stat(join(cwd(), 'pyre.config.js'));
+      if (stats.isFile()) {
+        console.log('Using pyre.config.js');
+        const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
+
+        const config = configFn();
+        input = config.input ? join(cwd(), config.input) : input;
+        output = config.output ? join(cwd(), config.output) : output;
+      }
+    } catch (e) {
+      console.log('No pyre.config.js found');
+    }
+
+    choki.watch(`${input}/**/*.ts`).on('change', async () => {
+      await transpile(input, output);
+    });
+
+    choki.watch(`${output}/**/*.pyre.js`).on('change', async (file) => {
+      await buildHtml(output, { file });
+    });
   });
 
 program

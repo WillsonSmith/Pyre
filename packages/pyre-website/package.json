@@ -24,7 +24,7 @@
       ]
     },
     "dev": {
-      "command": "pyre build && web-dev-server --node-resolve --root-dir pyre --watch --open",
+      "command": "pyre build && concurrently \"pyre watch\" \"web-dev-server --node-resolve --root-dir pyre --watch --open\"",
       "dependencies": [
         "../pyre:build"
       ]
@@ -37,6 +37,7 @@
     "pyre": "file:../pyre"
   },
   "devDependencies": {
-    "@web/dev-server": "^0.1.38"
+    "@web/dev-server": "^0.1.38",
+    "concurrently": "^8.0.1"
   }
 }

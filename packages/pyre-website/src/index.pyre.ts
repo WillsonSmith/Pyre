@@ -7,13 +7,6 @@ export const links = [
   },
 ];
 
-export const meta = [
-  {
-    name: 'description',
-    content: 'Pyre is a static site generator for the modern web.',
-  },
-];
-
 export const styles = css`
   body {
     font-family: 'Roboto', sans-serif;
