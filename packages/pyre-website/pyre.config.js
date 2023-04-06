@@ -2,7 +2,7 @@ export default () => {
   return {
     input: 'src',
     output: {
-      dir: 'dist',
+      dir: 'pyre',
     },
     watch: {
       assetStrategy: 'symlink', // symlink, copy, none

@@ -10,6 +10,7 @@ interface PageDetails {
   description?: string;
   styles?: string;
   links?: { rel: string; href: string }[];
+  meta?: { name: string; content: string }[];
 }
 export async function assemblePage(
   markup: string,
@@ -42,12 +43,12 @@ function replaceTemplateInserts(
   markup: string,
   data: PageDetails & { fileSourceDir: string; markdown?: string },
 ) {
-  const { lang = 'en', title, description, styles, links, fileSourceDir } = data;
+  const { lang = 'en', title, description, styles, links, fileSourceDir, meta } = data;
   let template = templateHTML;
   template = insertLanguage(template, lang);
   template = insertTitle(template, title);
   template = insertDescription(template, description);
-  template = insertMetaTags(template, []);
+  template = insertMetaTags(template, meta);
   template = insertLinks(template, links);
   template = insertStyles(template, styles);
   template = insertContent(template, markup);
@@ -116,7 +117,7 @@ function insertLinks(template: string, links: Link[] = []) {
 
 function insertStyles(template: string, styles?: string) {
   if (styles) {
-    return template.replace('<!-- PYRE:STYLES -->', styles);
+    return template.replace('<!-- PYRE:STYLES -->', `<style>${styles}</style>`);
   }
   return template.replace('<!-- PYRE:STYLES -->', '');
 }
