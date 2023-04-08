@@ -13,6 +13,8 @@ import { stat } from 'fs/promises';
 
 import choki from 'chokidar';
 
+import { ensureSymlink, copy, remove } from 'fs-extra';
+
 program
   .name('pyre')
   .description('Pyre is a static site generator for the modern web.')
@@ -37,7 +39,7 @@ program
   .option('-t, --template <template>', 'Template file')
   .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
-    const { input, output } = await loadConfig(options);
+    const { input, output, assetStrategy } = await loadConfig({ ...options, watch: true });
 
     choki.watch(`${input}/**/*.ts`).on('change', async () => {
       try {
@@ -46,6 +48,29 @@ program
         console.error(e);
       }
     });
+
+    // choki watch everything except typescript files
+    choki
+      .watch([`${input}/**/*`, `!${input}/**/*.ts`, `!${input}/**/*.md`])
+      .on('add', async (file) => {
+        try {
+          if (assetStrategy === 'symlink') {
+            await ensureSymlink(file, file.replace(input, output));
+          }
+          if (assetStrategy === 'copy') {
+            await copy(file, file.replace(input, output));
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      })
+      .on('unlink', async (file) => {
+        try {
+          await remove(file.replace(input, output));
+        } catch (e) {
+          console.error(e);
+        }
+      });
 
     choki.watch(`${output}/**/*.pyre.js`).on('change', async (file) => {
       try {
@@ -81,29 +106,56 @@ program
 
 program.parse();
 
-async function loadConfig(options: { input?: string; output?: string }) {
+async function loadConfig(options: { input?: string; output?: string; watch?: boolean }) {
   let config = {
     input: options.input || join(cwd(), 'src'),
     output: options.output || join(cwd(), 'pyre'),
+    assetStrategy: 'copy',
   };
+
   try {
     console.log(join(cwd(), 'pyre.config.js'));
     const stats = await stat(join(cwd(), 'pyre.config.js'));
     if (stats.isFile()) {
       const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
       const configFile = configFn();
+
       if (configFile.input) {
         config.input = join(cwd(), configFile.input);
       }
       if (configFile.output?.dir) {
         config.output = join(cwd(), configFile.output.dir);
       }
-      if (configFile.watch?.input) {
-        config.input = join(cwd(), configFile.watch.input);
+
+      if (options.watch) {
+        if (configFile.watch) {
+          if (configFile.watch?.input) {
+            config.input = join(cwd(), configFile.watch.input);
+          }
+          if (configFile.watch?.output?.dir) {
+            config.output = join(cwd(), configFile.watch.output.dir);
+          }
+
+          if (configFile.watch?.assetStrategy) {
+            config.assetStrategy = configFile.watch.assetStrategy;
+          }
+        }
+        return config;
       }
-      if (configFile.watch?.output) {
-        config.output = join(cwd(), configFile.watch.output.dir);
+
+      if (configFile.build) {
+        if (configFile.build?.input) {
+          config.input = join(cwd(), configFile.build.input);
+        }
+        if (configFile.build?.output) {
+          config.output = join(cwd(), configFile.build.output.dir);
+        }
+
+        if (configFile.build?.assetStrategy) {
+          config.assetStrategy = configFile.build.assetStrategy;
+        }
       }
+
       console.log('Using Pyre config');
       return config;
     }

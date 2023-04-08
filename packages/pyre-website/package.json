@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wireit",
     "build:prebundle": "wireit",
-    "dev": "wireit"
+    "dev": "wireit",
+    "watch": "wireit"
   },
   "wireit": {
     "build": {
@@ -25,6 +26,12 @@
     },
     "dev": {
       "command": "pyre build && concurrently \"pyre watch\" \"web-dev-server --node-resolve --root-dir pyre --watch --open\"",
+      "dependencies": [
+        "../pyre:build"
+      ]
+    },
+    "watch": {
+      "command": "pyre watch",
       "dependencies": [
         "../pyre:build"
       ]

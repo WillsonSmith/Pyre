@@ -4,11 +4,7 @@ import { renderLit } from './render-lit.js';
 
 import { assemblePage } from './assemble-page.js';
 
-/* eslint-disable import/extensions */
-//eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore-next-line
-import { outputFile } from 'fs-extra/esm';
-/* eslint-enable import/extensions */
+import { outputFile } from 'fs-extra';
 
 import fm from 'front-matter';
 import { marked } from 'marked';
