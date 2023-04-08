@@ -7,11 +7,12 @@ export default () => {
     watch: {
       assetStrategy: 'symlink', // symlink, copy, none
       output: {
-        dir: 'pyre',
+        dir: 'pyre-watch',
       },
     },
     build: {
       assetStrategy: 'copy', // symlink, copy, none
     },
+    markdownEnabledComponents: ['pyre-button', 'pyre-card', 'pyre-checkbox', 'pyre-chip'],
   };
 };

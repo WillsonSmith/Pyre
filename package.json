@@ -6,16 +6,16 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:pw": "wireit",
-    "dev:pw": "wireit"
+    "web:build": "wireit",
+    "web:dev": "wireit"
   },
   "wireit": {
-    "build:pw": {
+    "web:build": {
       "dependencies": [
         "./packages/pyre-website:build"
       ]
     },
-    "dev:pw": {
+    "web:dev": {
       "dependencies": [
         "./packages/pyre-website:dev"
       ]

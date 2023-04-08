@@ -37,29 +37,22 @@ program
   .option('-t, --template <template>', 'Template file')
   .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
-    let input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
-    let output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
-
-    try {
-      const stats = await stat(join(cwd(), 'pyre.config.js'));
-      if (stats.isFile()) {
-        console.log('Using pyre.config.js');
-        const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
-
-        const config = configFn();
-        input = config.input ? join(cwd(), config.input) : input;
-        output = config.output ? join(cwd(), config.output) : output;
-      }
-    } catch (e) {
-      console.log('No pyre.config.js found');
-    }
+    const { input, output } = await loadConfig(options);
 
     choki.watch(`${input}/**/*.ts`).on('change', async () => {
-      await transpile(input, output);
+      try {
+        await transpile(input, output);
+      } catch (e) {
+        console.error(e);
+      }
     });
 
     choki.watch(`${output}/**/*.pyre.js`).on('change', async (file) => {
-      await buildHtml(output, { file });
+      try {
+        await buildHtml(output, { file });
+      } catch (e) {
+        console.error(e);
+      }
     });
   });
 
@@ -71,31 +64,52 @@ program
   .option('-t, --template <template>', 'Template file')
   .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
-    let input = options.input ? join(cwd(), options.input) : join(cwd(), 'src');
-    let output = options.output ? join(cwd(), options.output) : join(cwd(), 'pyre');
+    const { input, output } = await loadConfig(options);
 
     try {
-      const stats = await stat(join(cwd(), 'pyre.config.js'));
-      if (stats.isFile()) {
-        console.log('Using pyre.config.js');
-        const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
-
-        const config = configFn();
-        input = config.input ? join(cwd(), config.input) : input;
-        output = config?.output?.dir ? join(cwd(), config.output.dir) : output;
-      }
+      // The following are requred by each other.
+      // Turn TypeScript into JavaScript
+      await transpile(input, output);
+      // Run Lit SSR on the JavaScript
+      await buildHtml(output, { prebundle: options.prebundle });
+      // Process markdown files
+      await buildMd(input, output);
     } catch (e) {
-      console.log('No pyre.config.js found');
+      console.error(e);
     }
-
-    await transpile(input, output);
-
-    await new Promise((resolve) => {
-      resolve(true);
-    });
-
-    await buildHtml(output, { prebundle: options.prebundle });
-    await buildMd(input, output);
   });
 
 program.parse();
+
+async function loadConfig(options: { input?: string; output?: string }) {
+  let config = {
+    input: options.input || join(cwd(), 'src'),
+    output: options.output || join(cwd(), 'pyre'),
+  };
+  try {
+    console.log(join(cwd(), 'pyre.config.js'));
+    const stats = await stat(join(cwd(), 'pyre.config.js'));
+    if (stats.isFile()) {
+      const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
+      const configFile = configFn();
+      if (configFile.input) {
+        config.input = join(cwd(), configFile.input);
+      }
+      if (configFile.output?.dir) {
+        config.output = join(cwd(), configFile.output.dir);
+      }
+      if (configFile.watch?.input) {
+        config.input = join(cwd(), configFile.watch.input);
+      }
+      if (configFile.watch?.output) {
+        config.output = join(cwd(), configFile.watch.output.dir);
+      }
+      console.log('Using Pyre config');
+      return config;
+    }
+  } catch (e) {
+    console.log(e);
+    console.log('Pyre config not found');
+  }
+  return config;
+}

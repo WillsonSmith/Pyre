@@ -1,5 +1,6 @@
-import { html, css, isServer } from 'lit';
+import { html, css } from 'lit';
 export const title = 'Home page';
+
 export const links = [
   {
     rel: 'stylesheet',
@@ -10,6 +11,10 @@ export const links = [
 export const styles = css`
   body {
     font-family: 'Roboto', sans-serif;
+    margin: 0;
+  }
+  h1 {
+    margin: 0;
   }
 `;
 
@@ -17,23 +22,13 @@ export const initialData = {
   pageContent: 'Hello!',
 };
 
-export default ({ pageContent } = initialData) => {
-  if (isServer) {
-    // perform some build time logic
-  }
+export default () => {
   return html`
     <main>
       <h1>Pyre</h1>
-      <p>${pageContent}</p>
+      <div>
+        <p>Building websites the <s>new</s> old way.</p>
+      </div>
     </main>
   `;
-};
-
-export const update = async () => {
-  // perform some client-side data hydration
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ pageContent: 'Asychronously updated!' });
-    }, 2000);
-  });
 };
