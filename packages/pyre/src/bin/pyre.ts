@@ -13,7 +13,7 @@ import { stat } from 'fs/promises';
 
 import choki from 'chokidar';
 
-import { ensureSymlink, copy, remove } from 'fs-extra';
+import { ensureSymlink, copy, remove, emptyDir } from 'fs-extra';
 
 program
   .name('pyre')
@@ -53,12 +53,16 @@ program
     choki
       .watch([`${input}/**/*`, `!${input}/**/*.ts`, `!${input}/**/*.md`])
       .on('add', async (file) => {
+        console.log(assetStrategy);
         try {
           if (assetStrategy === 'symlink') {
             await ensureSymlink(file, file.replace(input, output));
           }
           if (assetStrategy === 'copy') {
-            await copy(file, file.replace(input, output));
+            await copy(file, file.replace(input, output), {
+              overwrite: true,
+              dereference: true,
+            });
           }
         } catch (e) {
           console.error(e);
@@ -92,6 +96,11 @@ program
     const { input, output } = await loadConfig(options);
 
     try {
+      await emptyDir(output);
+    } catch (e) {
+      console.error(e);
+    }
+    try {
       // The following are requred by each other.
       // Turn TypeScript into JavaScript
       await transpile(input, output);
@@ -114,11 +123,14 @@ async function loadConfig(options: { input?: string; output?: string; watch?: bo
   };
 
   try {
-    console.log(join(cwd(), 'pyre.config.js'));
     const stats = await stat(join(cwd(), 'pyre.config.js'));
     if (stats.isFile()) {
       const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
       const configFile = configFn();
+
+      if (configFile.assetStrategy) {
+        config.assetStrategy = configFile.assetStrategy;
+      }
 
       if (configFile.input) {
         config.input = join(cwd(), configFile.input);

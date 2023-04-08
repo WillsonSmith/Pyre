@@ -4,13 +4,7 @@ export default () => {
     output: {
       dir: 'pyre',
     },
-    watch: {
-      assetStrategy: 'symlink', // symlink, copy, none
-      output: {},
-    },
-    build: {
-      assetStrategy: 'symlink', // symlink, copy, none
-    },
+    assetStrategy: 'symlink',
     markdownEnabledComponents: ['pyre-button', 'pyre-card', 'pyre-checkbox', 'pyre-chip'],
   };
 };
