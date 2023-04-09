@@ -1,5 +1,5 @@
 {
-  "name": "pyre",
+  "name": "pyre-monorepo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -42,5 +42,8 @@
   "workspaces": [
     "packages/pyre",
     "packages/pyre-website"
-  ]
+  ],
+  "dependencies": {
+    "@changesets/cli": "^2.26.1"
+  }
 }
