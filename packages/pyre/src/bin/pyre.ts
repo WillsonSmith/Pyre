@@ -44,7 +44,7 @@ program
     const { input, output, assetStrategy } = await loadConfig({ ...options, watch: true });
 
     try {
-      await emptyDir(output);
+      // await emptyDir(output);
     } catch (e) {
       console.error(e);
     }
@@ -113,7 +113,7 @@ program
     const { input, output, assetStrategy } = await loadConfig(options);
 
     try {
-      await emptyDir(output);
+      // await emptyDir(output);
     } catch (e) {
       console.error(e);
     }
