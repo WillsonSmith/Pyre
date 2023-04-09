@@ -70,7 +70,6 @@ program
     choki
       .watch([`${input}/**/*`, `!${input}/**/*.ts`, `!${input}/**/*.md`])
       .on('add', async (file) => {
-        console.log(assetStrategy);
         try {
           if (assetStrategy === 'symlink') {
             await ensureSymlink(file, file.replace(input, output));
@@ -189,7 +188,6 @@ async function loadConfig(options: { input?: string; output?: string; watch?: bo
       return config;
     }
   } catch (e) {
-    console.log(e);
     console.log('Pyre config not found');
   }
   return config;
