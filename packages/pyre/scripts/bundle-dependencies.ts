@@ -15,7 +15,7 @@ await esbuild({
   format: 'esm',
   outdir: join(__dirname, '..', 'dist/bundles'),
   platform: 'browser',
-  target: 'es2020',
+  target: 'es2022',
   minify: true,
   sourcemap: true,
 });

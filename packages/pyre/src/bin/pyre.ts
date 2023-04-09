@@ -13,6 +13,8 @@ import { stat } from 'fs/promises';
 
 import choki from 'chokidar';
 
+import { glob } from 'glob';
+
 import { ensureSymlink, copy, remove, emptyDir } from 'fs-extra';
 
 program
@@ -66,7 +68,6 @@ program
       }
     });
 
-    // choki watch everything except typescript files
     choki
       .watch([`${input}/**/*`, `!${input}/**/*.ts`, `!${input}/**/*.md`])
       .on('add', async (file) => {
@@ -109,7 +110,7 @@ program
   .option('-t, --template <template>', 'Template file')
   .option('--prebundle', 'Bundle Lit and @webcomponents/template-shadowroot')
   .action(async (options) => {
-    const { input, output } = await loadConfig(options);
+    const { input, output, assetStrategy } = await loadConfig(options);
 
     try {
       await emptyDir(output);
@@ -124,6 +125,26 @@ program
       await buildHtml(output, { prebundle: options.prebundle });
       // Process markdown files
       await buildMd(input, output);
+    } catch (e) {
+      console.error(e);
+    }
+
+    try {
+      const files = (await glob(`${input}/**/*`)).filter(
+        (file) => !file.endsWith('md') && !file.endsWith('ts'),
+      );
+
+      for (const file of files) {
+        if (assetStrategy === 'symlink') {
+          await ensureSymlink(file, file.replace(input, output));
+        }
+        if (assetStrategy === 'copy') {
+          await copy(file, file.replace(input, output), {
+            overwrite: true,
+            dereference: true,
+          });
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -188,6 +209,7 @@ async function loadConfig(options: { input?: string; output?: string; watch?: bo
       return config;
     }
   } catch (e) {
+    console.log(e);
     console.log('Pyre config not found');
   }
   return config;

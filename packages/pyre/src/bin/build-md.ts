@@ -57,8 +57,6 @@ export const build = async (srcDir: string, destDir: string) => {
     assembledPage;
 
     const fileToWrite = join(destDir, `${frontmatter.permalink}/index.html`);
-    // console.log(fileToWrite);
     await outputFile(fileToWrite, assembledPage);
-    // await writeFile(destFile, assembledPage);
   }
 };
