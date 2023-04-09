@@ -1,5 +1,5 @@
 {
-  "name": "pyre",
+  "name": "@willson/pyre",
   "version": "0.0.1",
   "description": "",
   "main": "dist/main.js",
