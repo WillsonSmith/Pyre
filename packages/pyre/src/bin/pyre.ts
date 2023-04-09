@@ -15,7 +15,7 @@ import choki from 'chokidar';
 
 import { glob } from 'glob';
 
-import { ensureSymlink, copy, remove, emptyDir } from 'fs-extra';
+import { ensureSymlink, copy, remove } from 'fs-extra';
 
 program
   .name('pyre')
