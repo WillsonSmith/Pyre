@@ -41,6 +41,23 @@ program
   .action(async (options) => {
     const { input, output, assetStrategy } = await loadConfig({ ...options, watch: true });
 
+    try {
+      await emptyDir(output);
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      // The following are requred by each other.
+      // Turn TypeScript into JavaScript
+      await transpile(input, output);
+      // Run Lit SSR on the JavaScript
+      await buildHtml(output, { prebundle: options.prebundle });
+      // Process markdown files
+      await buildMd(input, output);
+    } catch (e) {
+      console.error(e);
+    }
+
     choki.watch(`${input}/**/*.ts`).on('change', async () => {
       try {
         await transpile(input, output);

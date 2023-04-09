@@ -1,0 +1,60 @@
+@import url('https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css');
+
+:root,
+:host {
+  --color-background: hsla(0 0% 100% / 1);
+  --color-text-body: hsla(0 0% 0% / 0.9);
+
+  --font-system-sans: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-system-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-system-monospace: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-system: var(--font-system-sans);
+
+  --font-size-xxs: var(--sl-font-size-2x-small);
+  --font-size-xs: var(--sl-font-size-x-small);
+  --font-size-sm: var(--sl-font-size-small);
+  --font-size: var(--sl-font-size-medium);
+  --font-size-lg: var(--sl-font-size-large);
+  --font-size-xl: var(--sl-font-size-x-large);
+  --font-size-xxl: var(--sl-font-size-2x-large);
+
+  --font-weight: var(--sl-font-weight-normal);
+  --font-weight-bold: var(--sl-font-weight-bold);
+  --font-weight-light: var(--sl-font-weight-light);
+  --font-weight-medium: var(--sl-font-weight-medium);
+  --font-weight-semibold: var(--sl-font-weight-semibold);
+
+  --line-height-xs: var(--sl-line-height-denser);
+  --line-height-sm: var(--sl-line-height-dense);
+  --line-height: var(--sl-line-height-normal);
+  --line-height-lg: var(--sl-line-height-loose);
+  --line-height-xl: var(--sl-line-height-looser);
+
+  --border-radius-none: 0;
+  --border-radius-sm: var(--sl-border-radius-small);
+  --border-radius: var(--sl-border-radius-medium);
+  --border-radius-lg: var(--sl-border-radius-large);
+
+  --spacing-xxs: var(--sl-spacing-2x-small);
+  --spacing-xs: var(--sl-spacing-x-small);
+  --spacing-sm: var(--sl-spacing-small);
+  --spacing-base: var(--sl-spacing-medium);
+  --spacing: var(--spacing-base);
+  --spacing-lg: var(--sl-spacing-large);
+
+  font-family: var(--font-system);
+  line-height: var(--line-height);
+  font-weight: var(--font-weight-normal);
+
+  color: var(--color-text-body);
+  background-color: var(--color-background);
+
+  --size-text-block: 60ch;
+  --size-text-block-clamp: clamp(20ch, 100%, 60ch);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
