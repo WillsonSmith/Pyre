@@ -29,7 +29,9 @@
       const { default: template, initialData, update } = await import('<!-- PYRE:MODULE -->');
 
       const { render } = await import('lit');
-      hydrate(await template(initialData), document.body);
+      try {
+        hydrate(await template(initialData), document.body);
+      } catch (_) {}
       if (update) {
         update().then(async (data) => {
           render(await template(data), document.body);
