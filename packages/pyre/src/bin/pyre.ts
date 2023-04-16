@@ -82,7 +82,7 @@ program
             });
           }
         } catch (e) {
-          console.error(e);
+          // console.error(e);
         }
       })
       .on('unlink', async (file) => {
