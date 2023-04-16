@@ -163,7 +163,7 @@ async function loadConfig(options: { input?: string; output?: string; watch?: bo
     const stats = await stat(join(cwd(), 'pyre.config.js'));
     if (stats.isFile()) {
       const { default: configFn } = await import(join(cwd(), 'pyre.config.js'));
-      const configFile = configFn();
+      const configFile = await configFn();
 
       if (configFile.assetStrategy) {
         config.assetStrategy = configFile.assetStrategy;
