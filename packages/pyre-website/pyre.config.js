@@ -1,4 +1,4 @@
-export default () => {
+export default async () => {
   return {
     input: 'src',
     output: {
